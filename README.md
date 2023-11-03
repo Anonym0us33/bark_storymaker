@@ -1,3 +1,52 @@
+#INSTALL
+First change the variables in example.venv to the correct paths. The variables are explained below under "env"
+windows 
+```bash
+python -m venv venv_bark 
+venv_bark/Scripts/activate.bat
+git clone https://github.com/Anonym0us33/bark_storymaker
+cd bark_storymaker
+pip install -r freeze.txt
+```
+linux
+change `venv_bark/Scripts/activate.bat` to `source venv_bark/bin/activate`
+
+NOTE: freeze.txt is simple the output of one working environment. further steps may be required to install the pip requirements. Googleing the "Module not found" error usually gives the answer in the first result. I will make a setup script if there is demand for it.
+
+#ENV
+NOTE: these havn't been checked. you may have to alter them to fit the variables you are using. 
+ leave as "/" or "" if unsure
+`BARK_PATH = "path/to/folder"`
+path for results
+`OUTPUT_PATH = "/audio" `
+path to activate.bat
+`VENV_PATH = "/venv_bark/Scripts/activate.bat"`
+path to activate on linux. TODO: implement
+`VENV_PATH_LINUX = "/venv_bark/bin/activate"`
+how ofter files are saved when using chunks.
+Different to chunk size, set at runtime.
+`CHUNK_SAVE_FREQUENCY = 10`
+how ofter files are saved when using sentences.
+Sentence mode uses a token counter to cut audio at the end of a sentence. Not reccomended on GPUs with <16GB VRAM. That means you need a RTX 3090, 4080 Ti or better to guarentee this will work.
+`SENTENCE_SAVE_FREQUENCY = 10`
+Not implemented. Extra value if you want to edit the code and test it.
+`TEST_SAVE_FREQUENCY = 1`
+Defaults to first GPU. Not tested but can delete from code or edit value to 0,1,2,3 etc if you have 2 or more GPUs. Older GPUs had cores counted individually so if you get this working with CUDA 11.4 or lower this may be useful.
+`CUDA_VISIBLE_DEVICES = 0`
+Full list of speakers can be displayed using commands from original github below. This is my selection of the best ones. You can edit it to any valid value.
+`BEST_SPEAKERS = en_speaker_9,it_speaker_9,ja_speaker_0,en_speaker_6,de_speaker_3`
+The file to be read when selecting option 2.
+`TEXT_FILE = input.txt`
+Strings for testing and default string.
+`TEST_TEXT = "one"`
+`TEST_TEXT2 = "1"`
+`TEST_TEXT3 = "10 ten."`
+Test string from original repo. env var unused.
+`POTATOS = Картофель,potato,potato`
+
+#adapted from official github
+https://github.com/suno-ai/bark
+
 # 🐶 Bark
 
 [![](https://dcbadge.vercel.app/api/server/J2B2vsjKuE?style=flat&compact=True)](https://discord.gg/J2B2vsjKuE)

@@ -1,2 +1,12 @@
 __pycache__/
 suno_bark.egg-info/
+*.wav
+*.mp3
+.env
+venv_bark
+z past gens
+*.bat
+debug.py
+input.txt
+variable*.py
+*.lnk

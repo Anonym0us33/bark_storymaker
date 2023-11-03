@@ -40,9 +40,7 @@ t = fl.Text(txtfile) if len(txtfile)>1 else fl.Text("log.txt")
 output_dir = os.getenv("OUTPUT_PATH")    
 CHUNK_SAVE_FREQUENCY = os.getenv("CHUNK_SAVE_FREQUENCY")    
 SENTENCE_SAVE_FREQUENCY = os.getenv("SENTENCE_SAVE_FREQUENCY")    
-TEST_SAVE_FREQUENCY = os.getenv("TEST_SAVE_FREQUENCY")    
-
-
+TEST_SAVE_FREQUENCY = os.getenv("TEST_SAVE_FREQUENCY")
 
 def get_text():
     #depreciated
