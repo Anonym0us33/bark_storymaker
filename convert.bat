@@ -1,0 +1,1 @@
+ffmpeg -i bark_generation.wav bark_generation.mp3
