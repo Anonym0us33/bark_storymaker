@@ -63,7 +63,7 @@ class Text():
             '@': 'at',
             '#': 'hashtag',
             '+': 'plus',
-            '-': 'hyphen',
+            # '-': 'hyphen',
             '_': 'underscore',
             'lvl': 'level',
             'Lvl': 'level'

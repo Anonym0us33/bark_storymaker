@@ -38,9 +38,9 @@ from bark.api import semantic_to_waveform
 txtfile = os.getenv("TEXT_FILE")    
 t = fl.Text(txtfile) if len(txtfile)>1 else fl.Text("log.txt")
 output_dir = os.getenv("OUTPUT_PATH")    
-CHUNK_SAVE_FREQUENCY = os.getenv("CHUNK_SAVE_FREQUENCY")    
-SENTENCE_SAVE_FREQUENCY = os.getenv("SENTENCE_SAVE_FREQUENCY")    
-TEST_SAVE_FREQUENCY = os.getenv("TEST_SAVE_FREQUENCY")
+CHUNK_SAVE_FREQUENCY = int(os.getenv("CHUNK_SAVE_FREQUENCY")    )
+SENTENCE_SAVE_FREQUENCY = int(os.getenv("SENTENCE_SAVE_FREQUENCY")    )
+TEST_SAVE_FREQUENCY = int(os.getenv("TEST_SAVE_FREQUENCY"))
 
 def get_text():
     #depreciated
@@ -149,6 +149,7 @@ def main():
     silence = np.zeros(int(0.25 * SAMPLE_RATE))  
     #generate_ audio_array
     i,n=0,0
+    # i,n=0,4380
     if ChunkMode:
         print(f"text_prompt:{text_prompt} \n")
         words=text_prompt.split(" ");
@@ -189,14 +190,15 @@ def main():
                 write_audio(pieces,n)
                 pieces = []
                 i = 0
-    write_audio(pieces,0,_final)
+    write_audio(pieces,0,"_final")
 
 def write_audio(pieces,i=0,suffix=''):
     print(f"pieces:{len(pieces)} combining now")
     final_audio = np.concatenate(pieces)
+    gen_index = i / SENTENCE_SAVE_FREQUENCY
     # Audio(final_audio, rate=SAMPLE_RATE)
     # sf.write(f"Created_audio_{i}_pieces.wav", final_audio, SAMPLE_RATE) 
-    write_wav(f"{output_dir}/bark_generation{i}{suffix}.wav", SAMPLE_RATE, final_audio)
+    write_wav(f"{output_dir}/bark_generation{gen_index}{suffix}.wav", SAMPLE_RATE, final_audio)
 
 if __name__ == '__main__':
     deletme = os.getenv("CUDA_VISIBLE_DEVICES") #int 0

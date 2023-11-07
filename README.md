@@ -13,6 +13,8 @@ change `venv_bark/Scripts/activate.bat` to `source venv_bark/bin/activate`
 
 NOTE: freeze.txt is simple the output of one working environment. further steps may be required to install the pip requirements. Googleing the "Module not found" error usually gives the answer in the first result. I will make a setup script if there is demand for it.
 
+There is also a tutorial on a popular video website: /watch?v=w41-MUfxIWo
+
 #ENV
 NOTE: these havn't been checked. you may have to alter them to fit the variables you are using. 
  leave as "/" or "" if unsure
@@ -292,9 +294,6 @@ If you are interested, you can sign up for early access [here](https://3os84zs17
 #### What voices are supported by Bark?  
 * Bark supports 100+ speaker presets across [supported languages](#supported-languages). You can browse the library of speaker presets [here](https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c). The community also shares presets in [Discord](https://discord.gg/J2B2vsjKuE). Bark also supports generating unique random voices that fit the input text. Bark does not currently support custom voice cloning.
 
-#### Why is the output limited to ~13-14 seconds?
-* Bark is a GPT-style model, and its architecture/context window is optimized to output generations with roughly this length.
-
 #### How much VRAM do I need?
 * The full version of Bark requires around 12Gb of memory to hold everything on GPU at the same time. However, even smaller cards down to ~2Gb work with some additional settings. Simply add the following code snippet before your generation: 
 
@@ -303,6 +302,3 @@ import os
 os.environ["SUNO_OFFLOAD_CPU"] = True
 os.environ["SUNO_USE_SMALL_MODELS"] = True
 ```
-
-#### My generated audio sounds like a 1980s phone call. What's happening?
-* Bark generates audio from scratch. It is not meant to create only high-fidelity, studio-quality speech. Rather, outputs could be anything from perfect speech to multiple people arguing at a baseball game recorded with bad microphones.
