@@ -33,7 +33,7 @@ filename = "bark_generation"
 extension = ".wav"
 # convert(extension)
 
-a=input(f"Press Enter to read the file \"{filename}\", \
+a=input(f"Press Enter to read file \"{filename}\", \
  any 2 keys to exit instead...")
 if len(a) > 1: quit()
 audio_file = folder_path +"/"+ filename+extension

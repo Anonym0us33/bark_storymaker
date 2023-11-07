@@ -26,6 +26,7 @@ import os, random, argparse, nltk
 import numpy as np
 import soundfile as sf
 import simple_function_library as fl 
+import tkinter as tk
 from dotenv import load_dotenv
 from bark import SAMPLE_RATE
 load_dotenv()
@@ -41,6 +42,21 @@ output_dir = os.getenv("OUTPUT_PATH")
 CHUNK_SAVE_FREQUENCY = int(os.getenv("CHUNK_SAVE_FREQUENCY")    )
 SENTENCE_SAVE_FREQUENCY = int(os.getenv("SENTENCE_SAVE_FREQUENCY")    )
 TEST_SAVE_FREQUENCY = int(os.getenv("TEST_SAVE_FREQUENCY"))
+
+test_txt = os.getenv("TEST_TEXT")    
+test_txt = os.getenv("TEST_TEXT2")    
+test_txt = os.getenv("TEST_TEXT3")
+
+def tkinter_selector(
+      title='File selection'
+      ,folder_path=os.getcwd()
+  ):
+  example_file = tk.filedialog.askopenfilename(
+    title=title
+    ,initialdir=folder_path
+    ,filetypes=[('All','*')]
+  )
+  return example_file
 
 def get_text():
     #depreciated
@@ -129,6 +145,7 @@ def main():
     # words=text_prompt.split(" "); #TODO:del 
     chosen_speaker = choose_speaker()
     # we'll use this to split into sentences
+    print(f".env settings:\nCHUNK_SAVE_FREQUENCY={CHUNK_SAVE_FREQUENCY}\nSENTENCE_SAVE_FREQUENCY={SENTENCE_SAVE_FREQUENCY}\nTEST_SAVE_FREQUENCY={TEST_SAVE_FREQUENCY}\noutput_dir={output_dir}\ntxtfile={txtfile}\nChunkMode={ChunkMode}\nchosen_speaker={chosen_speaker}\n")
     
     print("loading models...")
     from bark import generate_audio, preload_models
@@ -151,6 +168,7 @@ def main():
     i,n=0,0
     # i,n=0,4380
     if ChunkMode:
+        #save chunks
         print(f"text_prompt:{text_prompt} \n")
         words=text_prompt.split(" ");
         chunks = [words[i:i+chunk_size] for i in range(0, len(words), chunk_size)]
@@ -165,11 +183,13 @@ def main():
             pieces += [audio_array, silence.copy()]
             i+=1
             n+=1
-            if i>CHUNK_SAVE_FREQUENCY:
-                write_audio(pieces,n)
-                pieces = []
-                i = 0
+            #TEST CODE only active if value >1
+            print(f'n={n}')
+            i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
+            #will not run if TEST >1 because i will be reset
+            i,pieces = _save_frequency(pieces,i,n,SENTENCE_SAVE_FREQUENCY)
     else:
+        #save sentences
         sentences = nltk.sent_tokenize(text_prompt)
         print(f"sentences:{sentences} \n")
         for sentence  in sentences:
@@ -186,19 +206,31 @@ def main():
             pieces += [audio_array, silence.copy()]
             i+=1
             n+=1
-            if i>SENTENCE_SAVE_FREQUENCY:
-                write_audio(pieces,n)
-                pieces = []
-                i = 0
-    write_audio(pieces,0,"_final")
+            #TEST CODE only active if value >1
+            i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
+            #will not run if TEST >1 because i will be reset
+            i,pieces = _save_frequency(pieces,i,n,SENTENCE_SAVE_FREQUENCY)
+    write_audio(pieces,suffix="_final")#TODO:not needed?
 
-def write_audio(pieces,i=0,suffix=''):
-    print(f"pieces:{len(pieces)} combining now")
+def _save_frequency(pieces,i,n,_SAVE_FREQUENCY):
+    if i>_SAVE_FREQUENCY&_SAVE_FREQUENCY>0:
+        write_audio(pieces,n,_SAVE_FREQUENCY)
+        pieces = []
+        i=0        
+    return (i, pieces)
+
+def write_audio(
+        pieces
+        ,i=0
+        ,_SAVE_FREQUENCY=1
+        ,suffix=''
+    ):
+    print(f"chunk done. \npieces={len(pieces)}\ni={i} >>combining now")
     final_audio = np.concatenate(pieces)
-    gen_index = i / SENTENCE_SAVE_FREQUENCY
+    gen_index = str(int(i / _SAVE_FREQUENCY))
     # Audio(final_audio, rate=SAMPLE_RATE)
     # sf.write(f"Created_audio_{i}_pieces.wav", final_audio, SAMPLE_RATE) 
-    write_wav(f"{output_dir}/bark_generation{gen_index}{suffix}.wav", SAMPLE_RATE, final_audio)
+    write_wav(f"{os.getcwd()}/{output_dir}/bark_generation{gen_index}{suffix}.wav", SAMPLE_RATE, final_audio)
 
 if __name__ == '__main__':
     deletme = os.getenv("CUDA_VISIBLE_DEVICES") #int 0
