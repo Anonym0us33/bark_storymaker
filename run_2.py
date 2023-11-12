@@ -19,8 +19,6 @@ main
         chunk | sentence
         combine audio
         write
-
-
 """
 import os, random, argparse, nltk
 import numpy as np
@@ -42,6 +40,7 @@ output_dir = os.getenv("OUTPUT_PATH")
 CHUNK_SAVE_FREQUENCY = int(os.getenv("CHUNK_SAVE_FREQUENCY")    )
 SENTENCE_SAVE_FREQUENCY = int(os.getenv("SENTENCE_SAVE_FREQUENCY")    )
 TEST_SAVE_FREQUENCY = int(os.getenv("TEST_SAVE_FREQUENCY"))
+TURN = int(os.getenv("TURN"))
 
 test_txt = os.getenv("TEST_TEXT")    
 test_txt = os.getenv("TEST_TEXT2")    
@@ -83,19 +82,21 @@ def get_chunk_size():
     return retstr
 
 def choose_speaker():
-    #using the hardcoded list, displays each
-    #speaker with the list index and
-    #checks if user input is a valid int
-    #and uses that int to choose from the list
+    '''
+        using the .env list, displays each
+        speaker with the list index and
+        checks if user input is a valid int
+        and uses that int to choose from the list
 
-    #en_speaker_6 = male
-    speaker = [
+        #en_speaker_6 = male
+        best speakers = [
         "en_speaker_9"
         ,"it_speaker_9"
         ,"ja_speaker_0"
         ,"en_speaker_6"
         ,"de_speaker_3"
     ]
+    '''
     speakers = os.getenv("BEST_SPEAKERS").split(",")
     lis = ''
     # i = 0
@@ -163,13 +164,13 @@ def main():
 
     pieces = []
     # quarter second of silence
-    silence = np.zeros(int(0.25 * SAMPLE_RATE))  
+    silence = np.zeros(int(0.1 * SAMPLE_RATE))  
     #generate_ audio_array
-    i,n=0,0
-    # i,n=0,4380
+    # i,TURN=1,0
+    i=1
     if ChunkMode:
         #save chunks
-        print(f"text_prompt:{text_prompt} \n")
+        # print(f"text_prompt:{text_prompt} \n")
         words=text_prompt.split(" ");
         chunks = [words[i:i+chunk_size] for i in range(0, len(words), chunk_size)]
         print(f"chunks:{chunks} \n")
@@ -182,17 +183,16 @@ def main():
             # sf.write(filename, audio_array, SAMPLE_RATE)
             pieces += [audio_array, silence.copy()]
             i+=1
-            n+=1
-            #TEST CODE only active if value >1
-            print(f'n={n}')
-            i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
-            #will not run if TEST >1 because i will be reset
-            i,pieces = _save_frequency(pieces,i,n,SENTENCE_SAVE_FREQUENCY)
+            TURN+=1 #THIS MAY NOT WORK revert turn to 'n' and pass it down the call stack to the bottom method
+            #save to file && reset i if i>SAVE_FREQ
+            print(f'n={TURN}')
+            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY)
+            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY)      
     else:
         #save sentences
         sentences = nltk.sent_tokenize(text_prompt)
         print(f"sentences:{sentences} \n")
-        for sentence  in sentences:
+        for sentence in sentences:
             # stop hallucination
             print(f'turn: {i} \n sentence  == {sentence}\n \
                 with {chosen_speaker}')
@@ -205,31 +205,45 @@ def main():
             audio_array = semantic_to_waveform(semantic_tokens, history_prompt=f"v2/{chosen_speaker}",)
             pieces += [audio_array, silence.copy()]
             i+=1
-            n+=1
-            #TEST CODE only active if value >1
-            i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
-            #will not run if TEST >1 because i will be reset
-            i,pieces = _save_frequency(pieces,i,n,SENTENCE_SAVE_FREQUENCY)
-    write_audio(pieces,suffix="_final")#TODO:not needed?
+            TURN+=1
+            #save to file && reset i if i>SAVE_FREQ
+            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY)
+            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY)    
+        write_audio(pieces,suffix="_final")
 
-def _save_frequency(pieces,i,n,_SAVE_FREQUENCY):
+def _save_frequency(pieces,i,_SAVE_FREQUENCY):
+    '''
+    TEST CODE only active if value >1
+        i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
+        will not run if TEST >1 because i will be reset
+        i,pieces = _save_frequency(pieces,i,n,SENTENCE_SAVE_FREQUENCY)
+    '''
     if i>_SAVE_FREQUENCY&_SAVE_FREQUENCY>0:
-        write_audio(pieces,n,_SAVE_FREQUENCY)
+        write_audio(pieces,TURN,_SAVE_FREQUENCY)
         pieces = []
         i=0        
     return (i, pieces)
 
 def write_audio(
         pieces
-        ,i=0
+        ,TURN=0
         ,_SAVE_FREQUENCY=1
         ,suffix=''
     ):
-    print(f"chunk done. \npieces={len(pieces)}\ni={i} >>combining now")
+    '''
+    saves the audio to a file, dividing i by _SAVE_FREQUENCY and naming it like:
+    f"{os.getcwd()}/{output_dir}/bark_generation{gen_index}{suffix}.wav"
+    where [output_dir] is from the .env file
+        pieces - the np audio to be saved
+        i - current iteration counter
+        _SAVE_FREQUENCY - how often file is to be saved.
+        ,suffix=''
+    '''
+    print(f"chunk done. \npieces={len(pieces)}\nn={n} >>combining now")
     final_audio = np.concatenate(pieces)
-    gen_index = str(int(i / _SAVE_FREQUENCY))
+    gen_index = str(int(n / _SAVE_FREQUENCY))
     # Audio(final_audio, rate=SAMPLE_RATE)
-    # sf.write(f"Created_audio_{i}_pieces.wav", final_audio, SAMPLE_RATE) 
+    # sf.write(f"Created_audio_{n}_pieces.wav", final_audio, SAMPLE_RATE) 
     write_wav(f"{os.getcwd()}/{output_dir}/bark_generation{gen_index}{suffix}.wav", SAMPLE_RATE, final_audio)
 
 if __name__ == '__main__':

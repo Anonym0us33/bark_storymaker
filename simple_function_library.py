@@ -4,19 +4,19 @@ load_dotenv()
 
 class Text():
     '''
-    handles formatting strings for TTS
-    uses subprocess, os, re, inflect, dotenv.load_dotenv
-    some class methods ask for user input from the cli
-    not all methods are suitable for automatic tts scripts
-    flow: 
-    menu> input==[1|2] >
-    {1:runner()|2:runnercmd()}>
-    caller(string)>
-    numbers_to_words(string)>
-    number_to_word(match,p)>
-    print "ok" & return null
-    any of these methods can be called, but the flow will
-    continue from there until a string is returned
+        handles formatting strings for TTS
+        uses subprocess, os, re, inflect, dotenv.load_dotenv
+        some class methods ask for user input from the cli
+        not all methods are suitable for automatic tts scripts
+        flow: 
+        menu> input==[1|2] >
+        {1:runner()|2:runnercmd()}>
+        caller(string)>
+        numbers_to_words(string)>
+        number_to_word(match,p)>
+        print "ok" & return null
+        any of these methods can be called, but the flow will
+        continue from there until a string is returned
     '''
 
     #unpythonic af but idgaf
@@ -58,15 +58,19 @@ class Text():
         # but it seems to break on decimals like 3.1
         #this is probably user error
         number_dict = {
-            '%': 'percent',
-            '&': 'and',
-            '@': 'at',
-            '#': 'hashtag',
-            '+': 'plus',
-            # '-': 'hyphen',
-            '_': 'underscore',
-            'lvl': 'level',
-            'Lvl': 'level'
+            '%': 'percent '
+            ,'&': ' and '
+            ,'@': 'at '
+            ,'#': 'hashtag '
+            ,'+': 'plus'
+            # ,'-': 'hyphen'
+            ,'_': ' underscore '
+            ,'lvl': 'level'
+            ,'Lvl': 'level'
+            ,'[': ''
+            ,'] ': ' '
+            ,'].': '.'
+            ,']\'': '\''
         }
         if match.group().isdigit():
             return p.number_to_words(match.group())
