@@ -207,11 +207,11 @@ def main():
             i+=1
             TURN+=1
             #save to file && reset i if i>SAVE_FREQ
-            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY)
-            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY)    
+            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY,TURN)
+            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY,TURN)    
         write_audio(pieces,suffix="_final")
 
-def _save_frequency(pieces,i,_SAVE_FREQUENCY):
+def _save_frequency(pieces,i,_SAVE_FREQUENCY,TURN):
     '''
     TEST CODE only active if value >1
         i,pieces = _save_frequency(pieces,i,n,TEST_SAVE_FREQUENCY)
@@ -241,9 +241,9 @@ def write_audio(
     '''
     print(f"chunk done. \npieces={len(pieces)}\nn={n} >>combining now")
     final_audio = np.concatenate(pieces)
-    gen_index = str(int(n / _SAVE_FREQUENCY))
+    gen_index = str(int(TURN / _SAVE_FREQUENCY))
     # Audio(final_audio, rate=SAMPLE_RATE)
-    # sf.write(f"Created_audio_{n}_pieces.wav", final_audio, SAMPLE_RATE) 
+    # sf.write(f"Created_audio_{TURN}_pieces.wav", final_audio, SAMPLE_RATE) 
     write_wav(f"{os.getcwd()}/{output_dir}/bark_generation{gen_index}{suffix}.wav", SAMPLE_RATE, final_audio)
 
 if __name__ == '__main__':
