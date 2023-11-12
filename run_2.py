@@ -40,7 +40,6 @@ output_dir = os.getenv("OUTPUT_PATH")
 CHUNK_SAVE_FREQUENCY = int(os.getenv("CHUNK_SAVE_FREQUENCY")    )
 SENTENCE_SAVE_FREQUENCY = int(os.getenv("SENTENCE_SAVE_FREQUENCY")    )
 TEST_SAVE_FREQUENCY = int(os.getenv("TEST_SAVE_FREQUENCY"))
-TURN = int(os.getenv("TURN"))
 
 test_txt = os.getenv("TEST_TEXT")    
 test_txt = os.getenv("TEST_TEXT2")    
@@ -116,6 +115,7 @@ def choose_mode():
     else:return False
 
 def main():
+    TURN = int(os.getenv("TURN"))
     '''
     flow: 
         t.menu>
