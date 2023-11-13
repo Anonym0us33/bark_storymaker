@@ -186,8 +186,8 @@ def main():
             TURN+=1 #THIS MAY NOT WORK revert turn to 'n' and pass it down the call stack to the bottom method
             #save to file && reset i if i>SAVE_FREQ
             print(f'n={TURN}')
-            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY)
-            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY)      
+            i, pieces = _save_frequency(pieces,i,TEST_SAVE_FREQUENCY,TURN)
+            i, pieces = _save_frequency(pieces,i,SENTENCE_SAVE_FREQUENCY,TURN)      
     else:
         #save sentences
         sentences = nltk.sent_tokenize(text_prompt)
