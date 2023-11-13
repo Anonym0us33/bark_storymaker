@@ -239,7 +239,7 @@ def write_audio(
         _SAVE_FREQUENCY - how often file is to be saved.
         ,suffix=''
     '''
-    print(f"chunk done. \npieces={len(pieces)}\nn={n} >>combining now")
+    print(f"chunk done. \npieces={len(pieces)}\nTURN={TURN} >>combining now")
     final_audio = np.concatenate(pieces)
     gen_index = str(int(TURN / _SAVE_FREQUENCY))
     # Audio(final_audio, rate=SAMPLE_RATE)
